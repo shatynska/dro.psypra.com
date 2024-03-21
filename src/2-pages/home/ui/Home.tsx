@@ -3,11 +3,11 @@ import { SectionGroup } from '~/shared/ui/Section';
 import {
   ApproachesSection,
   ContactsSection,
-  RatesSection,
   FormsSection,
   HeroSection,
   LocationsSection,
   QuestionsSection,
+  RatesSection,
   SchedulesSection,
   SpecialistsSection,
   SpecialtiesSection,

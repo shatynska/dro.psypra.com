@@ -5,7 +5,16 @@
 
 export interface paths {
   '/api/pages/home/questions': {
-    get: operations['GetHomeQuestionsPageSectionController_execute'];
+    get: operations['GetHomeQuestionsController_execute'];
+  };
+  '/api/pages/home/{dimension}': {
+    get: operations['GetHomeDimensionController_execute'];
+  };
+  '/api/pages/dimensions/{dimension}/main': {
+    get: operations['GetDimensionMainController_execute'];
+  };
+  '/api/pages/specialists/{specialist}/main': {
+    get: operations['GetSpecialistMainController_execute'];
   };
 }
 
@@ -13,30 +22,28 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
-    PageSectionHeaderHeadingsResponseDto: {
+    HeaderHeadingsResponseDto: {
       /** @example Критерії пошуку */
       primary: string;
       /** @example Багато питань? */
       secondary: string;
     };
-    PageSectionHeaderWithHrefResponseDto: {
+    HeaderResponseDto: {
       /**
        * @example {
        *   "primary": "Критерії пошуку",
        *   "secondary": "Багато питань?"
        * }
        */
-      headings: components['schemas']['PageSectionHeaderHeadingsResponseDto'];
-      /** @example /#questions */
-      href: string;
+      headings: components['schemas']['HeaderHeadingsResponseDto'];
     };
-    HomeQuestionsPageSectionContentItemResponseDto: {
+    HomeQuestionsContentItemResponseDto: {
       /** @example До кого звернутися? */
       title: string;
       /** @example /specialists */
       href: string;
     };
-    HomeQuestionsPageSectionContentResponseDto: {
+    HomeQuestionsContentResponseDto: {
       /**
        * @example [
        *   {
@@ -49,19 +56,18 @@ export interface components {
        *   }
        * ]
        */
-      items: components['schemas']['HomeQuestionsPageSectionContentItemResponseDto'][];
+      items: components['schemas']['HomeQuestionsContentItemResponseDto'][];
     };
-    HomeQuestionsPageSectionResponseDto: {
+    HomeQuestionsResponseDto: {
       /**
        * @example {
        *   "headings": {
        *     "primary": "Критерії пошуку",
        *     "secondary": "Багато питань?"
-       *   },
-       *   "href": "/#questions"
+       *   }
        * }
        */
-      header: components['schemas']['PageSectionHeaderWithHrefResponseDto'];
+      header: components['schemas']['HeaderResponseDto'];
       /**
        * @example {
        *   "items": [
@@ -76,7 +82,191 @@ export interface components {
        *   ]
        * }
        */
-      content: components['schemas']['HomeQuestionsPageSectionContentResponseDto'];
+      content: components['schemas']['HomeQuestionsContentResponseDto'];
+    };
+    HeaderWithHrefResponseDto: {
+      /**
+       * @example {
+       *   "primary": "Критерії пошуку",
+       *   "secondary": "Багато питань?"
+       * }
+       */
+      headings: components['schemas']['HeaderHeadingsResponseDto'];
+      /** @example /#questions */
+      href: string;
+    };
+    HomeDimensionContentItemResponseDto: {
+      /** @example psychologist */
+      alias: string;
+      /** @example психолог */
+      title: string;
+      /** @example /specialties/psychologist */
+      href: string;
+      /** @example Це фахівець, який оцінює, діагно­стує і вивчає пове­дінку і розу­мові процеси. Деякі пси­хологи, такі як клі­нічні ... */
+      description?: string;
+    };
+    HomeDimensionContentResponseDto: {
+      /**
+       * @example [
+       *   {
+       *     "alias": "psychologist",
+       *     "title": "психолог",
+       *     "href": "/specialties/psychologist",
+       *     "description": "Це фахівець, який оцінює, діагно­стує і вивчає пове­дінку і розу­мові процеси. Деякі пси­хологи, такі як клі­нічні ..."
+       *   },
+       *   {
+       *     "alias": "psychotherapist",
+       *     "title": "Психотерапевт",
+       *     "href": "/specialties/psychotherapist",
+       *     "description": "Фахівець, який має повну вищу ос­віту за нап­рямом під­готовки ..."
+       *   }
+       * ]
+       */
+      items: components['schemas']['HomeDimensionContentItemResponseDto'][];
+    };
+    HomeDimensionResponseDto: {
+      /**
+       * @example {
+       *   "headings": {
+       *     "primary": "Критерії пошуку",
+       *     "secondary": "Багато питань?"
+       *   },
+       *   "href": "/#questions"
+       * }
+       */
+      header: components['schemas']['HeaderWithHrefResponseDto'];
+      content: components['schemas']['HomeDimensionContentResponseDto'];
+    };
+    HeaderWithParentLinkResponseDto: {
+      /**
+       * @example {
+       *   "primary": "Спеціальності",
+       *   "secondary": "Хто є хто?"
+       * }
+       */
+      headings: components['schemas']['HeaderHeadingsResponseDto'];
+      /**
+       * @example {
+       *   "headings": {
+       *     "primary": "Критерії пошуку",
+       *     "secondary": "Багато питань?"
+       *   },
+       *   "href": "/#questions"
+       * }
+       */
+      parentLink: components['schemas']['HeaderWithHrefResponseDto'];
+    };
+    DimensionMainContentItemResponseDto: {
+      /** @example psychologist */
+      alias: string;
+      /** @example психолог */
+      title: string;
+      /** @example /specialties/psychologist */
+      href: string;
+      /** @example Це фахівець, який оцінює, діагно­стує і вивчає пове­дінку і розу­мові процеси. Деякі пси­хологи, такі як клі­нічні ... */
+      description?: string;
+    };
+    DimensionMainContentResponseDto: {
+      /**
+       * @example [
+       *   {
+       *     "alias": "psychologist",
+       *     "title": "психолог",
+       *     "href": "/specialties/psychologist",
+       *     "description": "Це фахівець, який оцінює, діагно­стує і вивчає пове­дінку і розу­мові процеси. Деякі пси­хологи, такі як клі­нічні ..."
+       *   },
+       *   {
+       *     "alias": "psychotherapist",
+       *     "title": "Психотерапевт",
+       *     "href": "/specialties/psychotherapist",
+       *     "description": "Фахівець, який має повну вищу ос­віту за нап­рямом під­готовки ..."
+       *   }
+       * ]
+       */
+      items: components['schemas']['DimensionMainContentItemResponseDto'][];
+    };
+    DimensionMainResponseDto: {
+      /**
+       * @example {
+       *   "headings": {
+       *     "primary": "Спеціальності",
+       *     "secondary": "Хто є хто?"
+       *   },
+       *   "parentLink": {
+       *     "headings": {
+       *       "primary": "Критерії пошуку",
+       *       "secondary": "Багато питань?"
+       *     },
+       *     "href": "/#questions"
+       *   }
+       * }
+       */
+      header: components['schemas']['HeaderWithParentLinkResponseDto'];
+      /**
+       * @example {
+       *   "items": [
+       *     {
+       *       "alias": "psychologist",
+       *       "title": "психолог",
+       *       "href": "/specialties/psychologist",
+       *       "description": "Це фахівець, який оцінює, діагно­стує і вивчає пове­дінку і розу­мові процеси. Деякі пси­хологи, такі як клі­нічні ..."
+       *     },
+       *     {
+       *       "alias": "psychotherapist",
+       *       "title": "Психотерапевт",
+       *       "href": "/specialties/psychotherapist",
+       *       "description": "Фахівець, який має повну вищу ос­віту за нап­рямом під­готовки ..."
+       *     }
+       *   ]
+       * }
+       */
+      content: components['schemas']['DimensionMainContentResponseDto'];
+    };
+    SpecialistMainContentResponseDto: {
+      firstName: string;
+      lastName: string;
+      specialties: string[];
+      phones: string[];
+      emails: string[];
+      websites: string[];
+    };
+    SpecialistMainResponseDto: {
+      /**
+       * @example {
+       *   "headings": {
+       *     "primary": "Спеціальності",
+       *     "secondary": "Хто є хто?"
+       *   },
+       *   "parentLink": {
+       *     "headings": {
+       *       "primary": "Критерії пошуку",
+       *       "secondary": "Багато питань?"
+       *     },
+       *     "href": "/#questions"
+       *   }
+       * }
+       */
+      header: components['schemas']['HeaderWithParentLinkResponseDto'];
+      /**
+       * @example {
+       *   "firstName": "Олена",
+       *   "lastName": "Шатинська",
+       *   "specialties": [
+       *     "психолог",
+       *     "психотерапевт"
+       *   ],
+       *   "phones": [
+       *     "+380980074869"
+       *   ],
+       *   "emails": [
+       *     "shatynskaa@gmail.com"
+       *   ],
+       *   "websites": [
+       *     "https://shatynska.in.ua"
+       *   ]
+       * }
+       */
+      content: components['schemas']['SpecialistMainContentResponseDto'];
     };
   };
   responses: never;
@@ -91,11 +281,68 @@ export type $defs = Record<string, never>;
 export type external = Record<string, never>;
 
 export interface operations {
-  GetHomeQuestionsPageSectionController_execute: {
+  GetHomeQuestionsController_execute: {
     responses: {
       200: {
         content: {
-          'application/json': components['schemas']['HomeQuestionsPageSectionResponseDto'];
+          'application/json': components['schemas']['HomeQuestionsResponseDto'];
+        };
+      };
+      404: {
+        content: {
+          'application/json': Record<string, never>;
+        };
+      };
+    };
+  };
+  GetHomeDimensionController_execute: {
+    parameters: {
+      path: {
+        dimension: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          'application/json': components['schemas']['HomeDimensionResponseDto'];
+        };
+      };
+      404: {
+        content: {
+          'application/json': Record<string, never>;
+        };
+      };
+    };
+  };
+  GetDimensionMainController_execute: {
+    parameters: {
+      path: {
+        dimension: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          'application/json': components['schemas']['DimensionMainResponseDto'];
+        };
+      };
+      404: {
+        content: {
+          'application/json': Record<string, never>;
+        };
+      };
+    };
+  };
+  GetSpecialistMainController_execute: {
+    parameters: {
+      path: {
+        specialist: string;
+      };
+    };
+    responses: {
+      200: {
+        content: {
+          'application/json': components['schemas']['SpecialistMainResponseDto'];
         };
       };
       404: {
